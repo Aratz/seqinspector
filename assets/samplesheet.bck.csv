@@ -1,0 +1,7 @@
+sample,lane,group,fastq_1,fastq_2,rundir
+SAMPLE_PAIRED_END1,1,P001,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,/tmp
+SAMPLE_PAIRED_END2,1,P002,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,
+SAMPLE_PAIRED_END3,1,P003,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,
+SAMPLE_PAIRED_END4,2,P001,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,
+SAMPLE_PAIRED_END5,2,P002,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,
+SAMPLE_PAIRED_END6,2,,https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/illumina/amplicon/sample1_R1.fastq.gz,,

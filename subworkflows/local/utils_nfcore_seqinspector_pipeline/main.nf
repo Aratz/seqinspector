@@ -266,3 +266,65 @@ def methodsDescriptionText(mqc_methods_yaml) {
 
     return description_html.toString()
 }
+
+process SORT_FILES {
+    input:
+    val multiqc_files
+    val multiqc_extra_files
+    val mode
+
+    exec:
+    sorted_multiqc_extra_files = multiqc_files
+        .filter { meta, sample -> filter_meta(meta, mode) }
+        .map { meta, sample ->
+            switch(mode) {
+                case "lane":
+                    return [lane: meta.lane]
+                case "group":
+                    return [group: meta.group]
+                case "rundir":
+                    return [rundir: meta.rundir]
+            }
+        }
+        .unique()
+        .combine(multiqc_extra_files)
+
+    sorted_mqc_files = multiqc_files
+        .filter { meta, sample -> filter_meta(meta, mode) }
+        .mix(sorted_multiqc_extra_files)
+        .map { meta, sample -> [ "[PREFIX:${filter_meta(meta, mode)}]", meta, sample ] }
+        .groupTuple()
+        .tap { sorted_mqc }
+        .collectFile{
+            prefix, meta, samples -> [
+                "${prefix}_multiqc_extra_config.yml",
+                """
+                    |output_fn_name: \"${prefix}_multiqc_report.html\"
+                    |data_dir_name:  \"${prefix}_multiqc_data\"
+                    |plots_dir_name: \"${prefix}_multiqc_plots\"
+                """.stripMargin()
+            ]
+        }
+        .map { file -> [ (file =~ /(\[PREFIX:.+\])/)[0][1], file ] }
+        .join(sorted_mqc)
+        .multiMap { prefix, config, meta , sorted_samples ->
+            sorted_samples: sorted_samples
+            config: config
+        }
+
+    output:
+    val sorted_mqc_files.sorted_samples
+    val sorted_mqc_files.config
+
+}
+
+def filter_meta(meta, mode) {
+    switch(mode) {
+        case "lane":
+            return meta.lane
+        case "group":
+            return meta.group
+        case "rundir":
+            return meta.rundir
+    }
+}
